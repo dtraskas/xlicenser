@@ -18,10 +18,71 @@ CREATE SCHEMA IF NOT EXISTS `xlicenser` DEFAULT CHARACTER SET latin1 ;
 USE `xlicenser` ;
 
 -- -----------------------------------------------------
+-- Table `xlicenser`.`product`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `xlicenser`.`product` (
+  `id` INT(11) NOT NULL,
+  `name` VARCHAR(128) NOT NULL,
+  `licence_params` BLOB NULL DEFAULT NULL,
+  `temp` VARCHAR(512) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `xlicenser`.`licence`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `xlicenser`.`licence` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `key_info` VARCHAR(512) NULL DEFAULT NULL,
+  `generated_key` VARCHAR(512) NULL DEFAULT NULL,
+  `customer_key` VARCHAR(512) NULL DEFAULT NULL,
+  `product_id` INT(11) NOT NULL,
+  `issue_date` DATETIME NOT NULL,
+  `expiry_date` DATETIME NULL DEFAULT NULL,
+  `comments` VARCHAR(512) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  INDEX `FK_product_id_idx` (`product_id` ASC),
+  CONSTRAINT `FK_product_id`
+    FOREIGN KEY (`product_id`)
+    REFERENCES `xlicenser`.`product` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `xlicenser`.`activation`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `xlicenser`.`activation` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `licence_id` INT(11) NOT NULL,
+  `date` DATETIME NOT NULL,
+  `machine_code` VARCHAR(256) NULL DEFAULT NULL,
+  `ipaddress` VARCHAR(45) NOT NULL,
+  `success` TINYINT(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  INDEX `FK_licence_id_idx` (`licence_id` ASC),
+  INDEX `FK_auth_licence_id_idx` (`licence_id` ASC),
+  CONSTRAINT `FK_auth_licence_id`
+    FOREIGN KEY (`licence_id`)
+    REFERENCES `xlicenser`.`licence` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
 -- Table `xlicenser`.`customer`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `xlicenser`.`customer` ;
-
 CREATE TABLE IF NOT EXISTS `xlicenser`.`customer` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `fname` VARCHAR(128) NOT NULL,
@@ -35,98 +96,44 @@ CREATE TABLE IF NOT EXISTS `xlicenser`.`customer` (
   `telephone` VARCHAR(45) NULL DEFAULT NULL,
   `email` VARCHAR(128) NOT NULL,
   `comments` VARCHAR(128) NULL DEFAULT NULL,
-  `date_added` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = latin1;
-
-CREATE UNIQUE INDEX `id_UNIQUE` ON `xlicenser`.`customer` (`id` ASC);
-
-
--- -----------------------------------------------------
--- Table `xlicenser`.`product`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `xlicenser`.`product` ;
-
-CREATE TABLE IF NOT EXISTS `xlicenser`.`product` (
-  `id` INT(11) NOT NULL,
-  `name` VARCHAR(128) NOT NULL,
-  `licence_params` VARCHAR(512) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = latin1;
-
-CREATE UNIQUE INDEX `id_UNIQUE` ON `xlicenser`.`product` (`id` ASC);
-
-
--- -----------------------------------------------------
--- Table `xlicenser`.`licence`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `xlicenser`.`licence` ;
-
-CREATE TABLE IF NOT EXISTS `xlicenser`.`licence` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `generated_key` VARCHAR(512) NOT NULL,
-  `product_id` INT(11) NOT NULL,
-  `issue_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `expiry_date` DATETIME NULL DEFAULT NULL,
-  `auth_machine_info` VARCHAR(45) NULL DEFAULT NULL,
-  `auth_date` DATETIME NULL DEFAULT NULL,
-  `failed_authentications` INT(11) NULL DEFAULT '50',
-  `max_authentications` INT(11) NULL DEFAULT '100',
-  `comments` VARCHAR(512) NULL DEFAULT NULL,
+  `date_added` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FK_product_id`
-    FOREIGN KEY (`product_id`)
-    REFERENCES `xlicenser`.`product` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION)
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC))
 ENGINE = InnoDB
+AUTO_INCREMENT = 7
 DEFAULT CHARACTER SET = latin1;
-
-CREATE UNIQUE INDEX `id_UNIQUE` ON `xlicenser`.`licence` (`id` ASC);
-
-CREATE INDEX `FK_product_id_idx` ON `xlicenser`.`licence` (`product_id` ASC);
 
 
 -- -----------------------------------------------------
 -- Table `xlicenser`.`licence_type`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `xlicenser`.`licence_type` ;
-
 CREATE TABLE IF NOT EXISTS `xlicenser`.`licence_type` (
   `id` INT(11) NOT NULL,
   `name` VARCHAR(45) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
-
-CREATE UNIQUE INDEX `id_UNIQUE` ON `xlicenser`.`licence_type` (`id` ASC);
 
 
 -- -----------------------------------------------------
 -- Table `xlicenser`.`provider`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `xlicenser`.`provider` ;
-
 CREATE TABLE IF NOT EXISTS `xlicenser`.`provider` (
   `id` INT(11) NOT NULL,
   `name` VARCHAR(128) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
-
-CREATE UNIQUE INDEX `id_UNIQUE` ON `xlicenser`.`provider` (`id` ASC);
 
 
 -- -----------------------------------------------------
 -- Table `xlicenser`.`registration`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `xlicenser`.`registration` ;
-
 CREATE TABLE IF NOT EXISTS `xlicenser`.`registration` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  `date` DATETIME NULL DEFAULT NULL,
   `customer_id` INT(11) NULL DEFAULT NULL,
   `product_id` INT(11) NULL DEFAULT NULL,
   `provider_id` INT(11) NULL DEFAULT NULL,
@@ -134,6 +141,10 @@ CREATE TABLE IF NOT EXISTS `xlicenser`.`registration` (
   `quantity` INT(11) NULL DEFAULT '1',
   `price` DOUBLE NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  INDEX `FK_product_id_idx` (`product_id` ASC),
+  INDEX `FK_provider_id_idx` (`provider_id` ASC),
+  INDEX `FK_licence_type_id_idx` (`licence_type` ASC),
   CONSTRAINT `FK_licence_type_id`
     FOREIGN KEY (`licence_type`)
     REFERENCES `xlicenser`.`licence_type` (`id`)
@@ -150,27 +161,21 @@ CREATE TABLE IF NOT EXISTS `xlicenser`.`registration` (
     ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
+AUTO_INCREMENT = 7
 DEFAULT CHARACTER SET = latin1;
-
-CREATE UNIQUE INDEX `id_UNIQUE` ON `xlicenser`.`registration` (`id` ASC);
-
-CREATE INDEX `FK_product_id_idx` ON `xlicenser`.`registration` (`product_id` ASC);
-
-CREATE INDEX `FK_provider_id_idx` ON `xlicenser`.`registration` (`provider_id` ASC);
-
-CREATE INDEX `FK_licence_type_id_idx` ON `xlicenser`.`registration` (`licence_type` ASC);
 
 
 -- -----------------------------------------------------
 -- Table `xlicenser`.`licence_registration`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `xlicenser`.`licence_registration` ;
-
 CREATE TABLE IF NOT EXISTS `xlicenser`.`licence_registration` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `registration_id` INT(11) NOT NULL,
   `licence_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  INDEX `FK_registration_id_idx` (`registration_id` ASC),
+  INDEX `FK_licence_id_idx` (`licence_id` ASC),
   CONSTRAINT `FK_licence_id`
     FOREIGN KEY (`licence_id`)
     REFERENCES `xlicenser`.`licence` (`id`)
@@ -182,13 +187,8 @@ CREATE TABLE IF NOT EXISTS `xlicenser`.`licence_registration` (
     ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
+AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = latin1;
-
-CREATE UNIQUE INDEX `id_UNIQUE` ON `xlicenser`.`licence_registration` (`id` ASC);
-
-CREATE INDEX `FK_registration_id_idx` ON `xlicenser`.`licence_registration` (`registration_id` ASC);
-
-CREATE INDEX `FK_licence_id_idx` ON `xlicenser`.`licence_registration` (`licence_id` ASC);
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

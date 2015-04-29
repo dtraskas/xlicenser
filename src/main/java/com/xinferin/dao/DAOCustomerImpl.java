@@ -36,8 +36,8 @@ public class DAOCustomerImpl implements DAOCustomer {
 	
 	@Override
 	public int add(Customer customer){
-        String sql = "INSERT INTO customer (fname, lname, company, street, city, state, country, postcode, telephone, email, comments)"
-                    + " VALUES (:fname, :lname, :company, :street, :city, :state, :country, :postcode, :telephone, :email, :comments)";
+        String sql = "INSERT INTO customer (fname, lname, company, street, city, state, country, postcode, telephone, email, comments, date_added)"
+                    + " VALUES (:fname, :lname, :company, :street, :city, :state, :country, :postcode, :telephone, :email, :comments, NOW())";
         
         SqlParameterSource sqlParameters = new BeanPropertySqlParameterSource(customer);
 		KeyHolder keyHolder = new GeneratedKeyHolder();

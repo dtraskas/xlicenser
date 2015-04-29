@@ -16,29 +16,27 @@ import com.xinferin.Utils;
 public class CustomerRegistration {
 	
 	private Customer customer;
-	//private LicenceType licenceType;
 	private String licenceType;
-	private int productId;
-	private int providerId;
+	private String product;
+	private String provider;
 	private double price;
 	private int daysToExpire;
 	
 	public CustomerRegistration(){
 		setCustomer(null);
 		setLicenceType("");
-		setProductId(-1);
-		setProviderId(-1);
+		setProduct("");
+		setProvider("");
 		setPrice(0);
 		setDaysToExpire(0);
 	}
 	
-	public CustomerRegistration(Customer customer, String licenceType, int productId, 
-								int providerId, double price, int daysToExpire){
+	public CustomerRegistration(Customer customer, String licenceType, String product, 
+								String provider, double price, int daysToExpire){
 		setCustomer(customer);
-		//setLicenceType(LicenceType.valueOf(licenceType));
 		setLicenceType(licenceType);
-		setProductId(productId);
-		setProviderId(providerId);
+		setProduct(product);
+		setProvider(provider);
 		setPrice(price);
 		setDaysToExpire(daysToExpire);
 	}
@@ -67,20 +65,20 @@ public class CustomerRegistration {
 		this.daysToExpire = daysToExpire;
 	}
 
-	public int getProductId() {
-		return productId;
+	public String getProduct() {
+		return product;
 	}
 
-	public void setProductId(int productId) {
-		this.productId = productId;
+	public void setProduct(String product) {
+		this.product = product;
 	}
 
-	public int getProviderId() {
-		return providerId;
+	public String getProvider() {
+		return provider;
 	}
 
-	public void setProviderId(int providerId) {
-		this.providerId = providerId;
+	public void setProvider(String provider) {
+		this.provider = provider;
 	}
 
 	public double getPrice() {

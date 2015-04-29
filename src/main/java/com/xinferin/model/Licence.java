@@ -12,16 +12,28 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class Licence {
+	private String key_info;
 	private String generated_key;
+	private String customer_key;
 	private int product_id;
 	private java.sql.Date expiry_date;
 	private String comments;
 	
 	public Licence(){
+		setKey_info("");
 		setGenerated_key("");
+		setCustomer_key("");
 		setProduct_id(-1);
 		setExpiry_date(Calendar.getInstance().getTime());
 		setComments("");
+	}
+	
+	public String getKey_info() {
+		return key_info;
+	}
+
+	public void setKey_info(String key_info) {
+		this.key_info = key_info;
 	}
 	
 	public String getGenerated_key() {
@@ -30,6 +42,14 @@ public class Licence {
 	
 	public void setGenerated_key(String generated_key) {
 		this.generated_key = generated_key;
+	}
+	
+	public String getCustomer_key() {
+		return customer_key;
+	}
+
+	public void setCustomer_key(String customer_key) {
+		this.customer_key = customer_key;
 	}
 	
 	public int getProduct_id() {

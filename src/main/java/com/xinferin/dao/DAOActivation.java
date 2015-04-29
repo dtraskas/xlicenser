@@ -9,11 +9,11 @@
 package com.xinferin.dao;
 
 import java.util.List;
-import com.xinferin.model.Provider;
 
-public interface DAOProvider {
+import com.xinferin.model.Activation;
+
+public interface DAOActivation {
+	public int add(Activation activation);
 	
-	public Provider get(String provider);
-	
-	public List<Provider> list();
+	public List<Activation> list();
 }

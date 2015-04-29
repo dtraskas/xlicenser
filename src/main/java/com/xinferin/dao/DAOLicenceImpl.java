@@ -28,8 +28,8 @@ public class DAOLicenceImpl implements DAOLicence {
 	
 	@Override
 	public int add(Licence licence) {
-        String sql = "INSERT INTO licence (generated_key, product_id, expiry_date, comments)"
-                + " VALUES (:generated_key, :product_id, :expiry_date, :comments)";
+        String sql = "INSERT INTO licence (key_info, generated_key, customer_key, product_id, issue_date, expiry_date, comments)"
+                + " VALUES (:key_info, :generated_key, :customer_key, :product_id, NOW(), :expiry_date, :comments)";
     
 	    SqlParameterSource sqlParameters = new BeanPropertySqlParameterSource(licence);
 		KeyHolder keyHolder = new GeneratedKeyHolder();

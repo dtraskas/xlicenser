@@ -54,4 +54,9 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter{
     public DAOCustomerRegistration getDAOCustomerRegistration() {
     	return new DAOCustomerRegistrationImpl(getDataSource());
     }
+    
+    @Bean
+	public DAOActivation getDAOActivation() {
+		return new DAOActivationImpl(getDataSource());
+	}
 }

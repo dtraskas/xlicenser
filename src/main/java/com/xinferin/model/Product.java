@@ -12,18 +12,21 @@ public class Product {
 	
 	private int id;
 	private String name;
-	private String licenceParams;
+	private byte[] licence_params;
+	private String temp;
 	
 	public Product(){
 		this.setId(-1);
 		this.setName("");
-		this.setLicenceParams("");
+		this.setLicence_params(null);
+		this.setTemp("");
 	}
 	
 	public Product(int id, String name){
 		this.setId(id);
 		this.setName(name);
-		this.setLicenceParams("");
+		this.setLicence_params(null);
+		this.setTemp("");
 	}
 
 	public int getId() {
@@ -42,11 +45,19 @@ public class Product {
 		this.name = name;
 	}
 
-	public String getLicenceParams() {
-		return licenceParams;
+	public byte[] getLicence_params() {
+		return licence_params;
 	}
 
-	public void setLicenceParams(String licenceParams) {
-		this.licenceParams = licenceParams;
+	public void setLicence_params(byte[] licenceParams) {
+		this.licence_params = licenceParams;
+	}
+
+	public String getTemp() {
+		return temp;
+	}
+
+	public void setTemp(String temp) {
+		this.temp = temp;
 	}
 }
