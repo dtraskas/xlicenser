@@ -11,10 +11,12 @@ package com.xinferin.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -41,7 +43,20 @@ public class DAOActivationImpl implements DAOActivation {
 	    
 	    return keyHolder.getKey().intValue();
 	}
-
+	
+	@Override
+	public int getCount(int licenceId) {
+		
+		String sql = "SELECT COUNT(*) FROM activation WHERE licence_id = :id";
+		MapSqlParameterSource args = new MapSqlParameterSource();
+		args = new MapSqlParameterSource();
+		args.addValue("id", licenceId);
+		
+		int count = jdbcTemplate.queryForObject(sql, args, Integer.class);
+		
+		return count;
+	}
+	
 	@Override
 	public List<Activation> list() {
 		String sql = "SELECT * FROM activation";

@@ -1,4 +1,5 @@
 /*
+
  *	XLicenser Source Code
  *	Copyright (C) 2015 XINFERIN Technologies 
  *  
@@ -8,6 +9,8 @@
 
 package com.xinferin.dao;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -22,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.xinferin.licensing.LicenceGenerator;
 import com.xinferin.model.CustomerRegistration;
-import com.xinferin.model.KeyRequest;
 import com.xinferin.model.Licence;
 import com.xinferin.model.LicenceType;
 import com.xinferin.model.Product;
@@ -59,61 +61,38 @@ public class DAOCustomerRegistrationImpl implements DAOCustomerRegistration {
 		int registrationId = addRegistration(customerId, product.getId(), provider.getId(), creg.getLicenceType(), creg.getPrice());						
 		if (registrationId < 0) throw new RegistrationNotCreatedException();
 		
-		// use the LicenceGenerator to create a new licence key using PRODUCT | CUSTOMER FULLNAME | CUSTOMER EMAIL | LICENCE TYPE | EXPIRY DATE   
-		String key_info = creg.getProduct() + "|" + 
+		// first add the licence before updating with the newly generated licence id the key_info field
+		Licence licence = new Licence();
+		licence.setProduct_id(product.getId());
+		
+		DAOLicenceImpl daoLicenceImpl = new DAOLicenceImpl(dataSource);
+		int licenceId = daoLicenceImpl.add(licence);		
+		licence.setId(licenceId);
+		
+		// use the LicenceGenerator to create a new licence key
+		// LICENCE_ID | PRODUCT | CUSTOMER FULLNAME | CUSTOMER EMAIL | LICENCE TYPE | EXPIRY DATE
+		
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		String key_info = licenceId + "|" +
+						  creg.getProduct() + "|" + 
 						  creg.getCustomer().getFname() + ", " + creg.getCustomer().getLname() + "|" + 
 						  creg.getCustomer().getEmail() + "|" + 
 						  creg.getLicenceType() + "|" + 
-						  creg.getDaysToExpire();
+						  df.format(creg.getExpiryDate());
 		
 		LicenceGenerator lg = new LicenceGenerator(product.getLicence_params());
 		byte[] generatedKey = lg.signData(key_info.getBytes());
 		String signedB64 = Base64.encodeBase64String(generatedKey);
 		
-		// add a new licence with a generated key.
-		Licence licence = new Licence();
-		licence.setKey_info(key_info);
+		// update the new licence with the generated key.
+		licence.setKey_info(Base64.encodeBase64String(key_info.getBytes()));
 		licence.setGenerated_key(signedB64);
-		licence.setCustomer_key(UUID.randomUUID().toString());
-		licence.setProduct_id(product.getId());
+		licence.setCustomer_key(UUID.randomUUID().toString());		
 		licence.setExpiry_date(creg.getExpiryDate());
-		
-		DAOLicenceImpl daoLicenceImpl = new DAOLicenceImpl(dataSource);
-		int licenceId = daoLicenceImpl.add(licence);		
+		daoLicenceImpl.update(licence);		
 		
 		// bind the registration with the licence.
 		bindRegistrationAndLicence(registrationId, licenceId);	
-	}
-	
-	@Override
-	public String getLicence(KeyRequest keyRequest){
-		
-		String generatedKey = "";
-		try {
-			String sql = "SELECT licence_id FROM xlicenser.licence_registration" 
-						 + " WHERE registration_id = (SELECT id FROM xlicenser.registration" 
-						 + "  				          WHERE customer_id = (SELECT id FROM xlicenser.customer WHERE email = :email)"
-						 + ")";
-			MapSqlParameterSource args = new MapSqlParameterSource();
-			args.addValue("email", keyRequest.getEmail());
-			int licence_id_one = jdbcTemplate.queryForObject(sql, args, Integer.class);
-			
-			sql = "SELECT id FROM xlicenser.licence WHERE customer_key = :key";
-			args = new MapSqlParameterSource();
-			args.addValue("key", keyRequest.getKey());
-			int licence_id_two = jdbcTemplate.queryForObject(sql, args, Integer.class);
-			
-			if (licence_id_one == licence_id_two){
-				sql = "SELECT generated_key FROM xlicenser.licence WHERE customer_key = :key";
-				args = new MapSqlParameterSource();
-				args.addValue("key", keyRequest.getKey());
-				
-				generatedKey = jdbcTemplate.queryForObject(sql, args, String.class);
-			}
-		} catch (Exception ex) {
-			return "";
-		}
-		return generatedKey;
 	}
 	
 	private int addRegistration(int customerId, int productId, int providerId, LicenceType licenceType, double price){

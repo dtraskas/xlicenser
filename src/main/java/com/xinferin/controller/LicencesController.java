@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import com.xinferin.config.*;
+import com.xinferin.dao.DAOLicence;
+import com.xinferin.model.KeyRequest;
+import com.xinferin.model.LicenceReply;
 
 @RestController
 @RequestMapping("/licences")
@@ -21,9 +24,18 @@ public class LicencesController {
 	@Autowired
 	private MvcConfiguration config = new MvcConfiguration();
 	
-	@RequestMapping(value = "/activate", method = RequestMethod.POST)
-	@ResponseStatus(HttpStatus.CREATED)	
-	public void activate(String machineId, String licenceKey){
-		
+	@Autowired	
+	private DAOLicence daoLicence = config.getDAOLicence();	
+	
+	@RequestMapping(value = "/get", method = RequestMethod.POST, consumes="application/json")
+	@ResponseStatus(HttpStatus.OK)	
+	public LicenceReply get(@RequestBody KeyRequest keyRequest){
+		return daoLicence.get(keyRequest);
+	}
+	
+	@RequestMapping(value = "/{licenceId}", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)	
+	public String checkRevoke(@PathVariable int licenceId){
+		return daoLicence.checkRevoke(licenceId);
 	}
 }

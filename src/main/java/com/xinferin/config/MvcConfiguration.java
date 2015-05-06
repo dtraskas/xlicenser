@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
 import com.xinferin.dao.*;
 
 @Configuration
@@ -58,5 +57,10 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter{
     @Bean
 	public DAOActivation getDAOActivation() {
 		return new DAOActivationImpl(getDataSource());
+	}
+    
+    @Bean
+	public DAOLicence getDAOLicence() {
+		return new DAOLicenceImpl(getDataSource());
 	}
 }

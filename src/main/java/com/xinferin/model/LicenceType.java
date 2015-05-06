@@ -9,7 +9,7 @@
 package com.xinferin.model;
 
 public enum LicenceType {
-    LIMITED(1), UNLIMITED(2), TRIAL(3), TIME_BASED(4);
+    LIMITED(1), UNLIMITED(2), TIME_BASED(3), SUBSCRIPTION(4);
     
     private int ltype;
     

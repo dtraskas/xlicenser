@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class Licence {
+	private int id;
 	private String key_info;
 	private String generated_key;
 	private String customer_key;
@@ -20,12 +21,21 @@ public class Licence {
 	private String comments;
 	
 	public Licence(){
+		setId(-1);
 		setKey_info("");
 		setGenerated_key("");
 		setCustomer_key("");
 		setProduct_id(-1);
 		setExpiry_date(Calendar.getInstance().getTime());
 		setComments("");
+	}
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 	
 	public String getKey_info() {
