@@ -3,7 +3,7 @@ XLicenser REST API
 
 Welcome to the XLicenser REST API source code! 
 
-From this repository you can build the licensing server REST API. 
+From this repository you can build the licensing server REST API. This API offers you a full licensing server that creates new customers, new licences as well as a full activation process. The API uses RSA encryption and OAuth2 authentication to ensure that the target application will exchange all information in a secure and safe manner with the server.
 
 Prerequisities
 --------------
@@ -18,7 +18,6 @@ The XLicenser API can be deployed once Apache Tomcat7 is running.
 - Copy the **.war** file to the webapps location in your Tomcat directory
 - The project uses OAuth2 authentication so in order to test the API you will require to follow the authentication process
 
-Instead of modifying **global.props**, you can create **user.props**, more information [here](https://github.com/KeenSoftwareHouse/SpaceEngineers/wiki/Initial-setup).
 
 How to contribute
 -----------------
