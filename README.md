@@ -5,7 +5,7 @@ Welcome to the XLicenser REST API source code!
 
 From this repository you can build the licensing server REST API. This API offers you a full licensing server that creates new customers, new licences as well as a full activation process. The API uses RSA encryption and OAuth2 authentication to ensure that the target application will exchange all information in a secure and safe manner with the server.
 
-Prerequisities
+Prerequisites
 --------------
 - Latest version of Spring - Eclipse
 - Apache Tomcat 7
